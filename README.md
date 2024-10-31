@@ -84,7 +84,7 @@ This project also demonstrates techniques for minimizing cold starts and reducin
 
 ## Getting Started
 
-1. **Clone this repository**: `git clone https://github.com/your-username/cloudsql-best-practices.git`
+1. **Clone this repository**: `git clone https://github.com/deyvidm18/cloudsql-best-practices.git`
 2. **Set up your Google Cloud project**: Create a new project or use an existing one.
 3. **Enable necessary APIs**: Enable the Cloud SQL Admin API, Secret Manager API, Cloud Functions API (if applicable), and Cloud Run API (if applicable).
 4. **Create a Cloud SQL instance**: Create a new Cloud SQL instance for your database.
