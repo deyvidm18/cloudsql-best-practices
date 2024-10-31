@@ -1,0 +1,66 @@
+steps:
+  # Build and push the Docker image for Cloud Run
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['build', '-t', 'us-central1-docker.pkg.dev/$PROJECT_ID/docker-images/python-example', 'run-functions/python-example']
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'us-central1-docker.pkg.dev/$PROJECT_ID/docker-images/python-example']
+
+  # Deploy to Cloud Run
+  - name: 'gcr.io/cloud-builders/gcloud'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        gcloud run deploy main-run \
+          --image us-central1-docker.pkg.dev/$PROJECT_ID/docker-images/python-example \
+          --platform managed \
+          --region us-central1 \
+          --set-env-vars MAX_CONNECTIONS=100,PRIVATE_IP='true',DB_IAM_USER='function-sa',SECRET_NAME='db-conn',PROJECT_ID=$PROJECT_ID \
+          --service-account function-sa@$PROJECT_ID.iam.gserviceaccount.com \
+          --vpc-egress private-ranges-only \
+          --subnet us-central1-vpc-egress \
+          --ingress internal \
+          --cpu-boost \
+          --min-instances 1 \
+          --max-instances 5
+
+  # Deploy the first Cloud Function (main)
+  - name: 'gcr.io/cloud-builders/gcloud'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        gcloud functions deploy main \
+          --runtime python310 \
+          --trigger-http \
+          --entry-point main \
+          --source run-functions/python-example \
+          --set-env-vars MAX_CONNECTIONS=1,PRIVATE_IP='true',DB_IAM_USER='function-sa',SECRET_NAME='db-conn',PROJECT_ID=$PROJECT_ID \
+          --service-account function-sa@$PROJECT_ID.iam.gserviceaccount.com \
+          --build-service-account projects/$PROJECT_ID/serviceAccounts/function-sa@$PROJECT_ID.iam.gserviceaccount.com \
+          --no-gen2 \
+          --vpc-connector my-connector \
+          --ingress-settings all \
+          --min-instances 1 \
+          --max-instances 5
+
+  # Deploy the second Cloud Function (main-gen2)
+  - name: 'gcr.io/cloud-builders/gcloud'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        gcloud functions deploy main-gen2 \
+          --runtime python310 \
+          --trigger-http \
+          --entry-point main \
+          --source run-functions/python-example \
+          --set-env-vars MAX_CONNECTIONS=100,PRIVATE_IP='true',DB_IAM_USER='function-sa',SECRET_NAME='db-conn',PROJECT_ID=$PROJECT_ID \
+          --service-account function-sa@$PROJECT_ID.iam.gserviceaccount.com \
+          --build-service-account projects/$PROJECT_ID/serviceAccounts/function-sa@$PROJECT_ID.iam.gserviceaccount.com \
+          --vpc-connector my-connector \
+          --ingress-settings all \
+          --min-instances 1 \
+          --max-instances 5
+options:
+  defaultLogsBucketBehavior: REGIONAL_USER_OWNED_BUCKET 

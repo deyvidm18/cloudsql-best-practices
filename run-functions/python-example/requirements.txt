@@ -1,0 +1,9 @@
+Flask==2.2.2
+SQLAlchemy==2.0.36
+PyMySQL==1.1.1
+gunicorn==22.0.0
+cloud-sql-python-connector==1.13.0
+functions-framework==3.*
+Werkzeug==2.3.7
+google-cloud-secret-manager==2.21.0
+Faker==0.7.4
