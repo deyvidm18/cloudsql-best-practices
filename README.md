@@ -38,7 +38,7 @@ This project also demonstrates techniques for minimizing cold starts and reducin
 - **Secret Manager**: A secure and convenient service for storing API keys, passwords, and other sensitive data.
 - **IAM**: Identity and Access Management, Google Cloud's identity and access control system.
 - **Pub/Sub**: A real-time messaging service that allows you to send and receive messages between independent applications.
--**Cloud Build**: A serverless CI/CD platform that lets you build, test, and deploy applications on Google Cloud.
+- **Cloud Build**: A serverless CI/CD platform that lets you build, test, and deploy applications on Google Cloud.
 
 ## Comparison Tables
 
